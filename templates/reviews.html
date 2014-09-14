@@ -1,0 +1,99 @@
+
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="description" content="">
+    <meta name="author" content="">
+    <link rel="icon" href="../../favicon.ico">
+
+    <title>Uncovering Helpful Amazon Reviews</title>
+
+    <!-- Bootstrap core CSS -->
+    <link href="/static/bootstrap.min.css" rel="stylesheet">
+
+    <!-- Custom styles for this template -->
+    <link href="starter-template.css" rel="stylesheet">
+
+    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
+    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
+    <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
+
+    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
+    <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
+
+    <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
+    <!--[if lt IE 9]>
+      <script src="https://oss.maxcdn.com/html5shiv/3.7.2/html5shiv.min.js"></script>
+      <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script>
+    <![endif]-->
+  </head>
+
+  <body>
+
+    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
+      <div class="container-fluid">
+        <div class="navbar-header">
+          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
+            <span class="sr-only">Toggle navigation</span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+            <span class="icon-bar"></span>
+          </button>
+          <a class="navbar-brand" href="#">Helpful Amazon Reviews</a>
+        </div>
+        <div class="navbar-collapse collapse">
+          <ul class="nav navbar-nav navbar-right">
+            <li><a href="#">About</a></li>
+            <li><a href="#">Help</a></li>
+          </ul>
+
+        </div>
+      </div>
+    </div>
+
+<br><br> 
+
+    <div class="container">
+      <div class="starter-template">
+        <h1>Helpful Amazon Reviews</h1>
+        <form class="navbar-form navbar-center" action="." method="post">
+            <!-- <input type="text" class="form-control" name='product' placeholder="Search..."> -->
+            <select class="form-control" name="product">
+                <option selected="selected">Choose a product ...</option>
+                <option value='B00004WCIC'>Canon RC-1 Wireless Remote Control for Select DSLR Cameras</option>
+                <option value='B0009GZSSO'>Canon Powershot S2 IS 5MP Digital Camera with 12x Optical Image Stabilized Zoom</option>
+                <option value='B000MW3YEU'>Panasonic Lumix DMC-TZ3S 7.2MP Digital Camera with 10x Optical Image Stabilized Zoom (Silver)</option>
+                <option value='B000Q3043Y'>Canon PowerShot Pro Series S5 IS 8.0MP Digital Camera with 12x Optical Image Stabilized Zoom</option>
+                <option value='B000N386VE'>Panasonic Lumix DMC-TZ3K 7.2MP Digital Camera with 10x Optical Image Stabilized Zoom (Black)</option>
+                <option value='B00091S0WA'>Sony LCS-CST General Purpose Soft Carrying Case for Slim Cybershot Digital Cameras</option>
+                <option value='B000093UDQ'>Digital Concepts TR-60N Camera Tripod with Carrying Case</option>
+                <option value='B0002EMY9Y'>Nikon SB-600 Speedlight Flash for Nikon Digital SLR Cameras</option>
+                <option value='B000KKPN5C'>Nikon SB-400 AF Speedlight Flash for Nikon Digital SLR Cameras</option>
+                <option value='B000EXT5AY'>Tamron AF 70-300mm f/4.0-5.6 Di LD Macro Zoom Lens for Konica Minolta and Sony Digital SLR Cameras</option>
+            </select>
+            <input type="submit" class="form-control" value="Get Reviews!" />
+          </form>
+      </div>
+    <br><br>
+    <table class="table table-hover">
+{#    <tr><th>Review</th><th>Number of Votes</th><th>Number of Helpful Votes</th></tr>#}
+    {% for review in reviews %}
+    <tr><td>{{ review['review_text'] }}</td><td>{{ review['score']}}</td></tr>
+    {% endfor %}
+    </table>
+    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
+    <script src="static/js/bootstrap.min.js"></script>
+
+    </div><!-- /.container -->
+
+
+    <!-- Bootstrap core JavaScript
+    ================================================== -->
+    <!-- Placed at the end of the document so the pages load faster -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
+    <script src="../../dist/js/bootstrap.min.js"></script>
+  </body>
+</html>
