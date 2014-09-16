@@ -11,18 +11,29 @@
 
     <title>Uncovering Helpful Amazon Reviews</title>
 
+
+
     <!-- Bootstrap core CSS -->
-    <link href="/static/bootstrap.min.css" rel="stylesheet">
+    <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
     <!-- Custom styles for this template -->
-    <link href="starter-template.css" rel="stylesheet">
+    <link href="static/starter-template.css" rel="stylesheet">
 
-    <!-- Just for debugging purposes. Don't actually copy these 2 lines! -->
-    <!--[if lt IE 9]><script src="../../assets/js/ie8-responsive-file-warning.js"></script><![endif]-->
-    <script src="../../assets/js/ie-emulation-modes-warning.js"></script>
+    <!-- Slider for Bootstrap -->
+    <link href="/static/slider/css/slider.css" rel="stylesheet">
 
-    <!-- IE10 viewport hack for Surface/desktop Windows 8 bug -->
-    <script src="../../assets/js/ie10-viewport-bug-workaround.js"></script>
+    <script src="/static/jquery.js"></script>
+    <script src="static/bootstrap/js/bootstrap.min.js"></script>
+    <script src="/static/slider/js/bootstrap-slider.js"></script>
+    <script>
+    $(document).ready(function()
+    {
+        $('#review_date').slider().on('slide', function(ev){})
+    })
+
+    </script>
+
+
 
     <!-- HTML5 shim and Respond.js IE8 support of HTML5 elements and media queries -->
     <!--[if lt IE 9]>
@@ -54,7 +65,9 @@
       </div>
     </div>
 
-<br><br> 
+<br><br>
+
+
 
     <div class="container">
       <div class="starter-template">
@@ -78,14 +91,21 @@
           </form>
       </div>
     <br><br>
+
+
+    <input id="review_date" data-slider-tooltip="hide" value="2" data-slider-value="2">
+
+
+    <br><br>
+
     <table class="table table-hover">
 {#    <tr><th>Review</th><th>Number of Votes</th><th>Number of Helpful Votes</th></tr>#}
     {% for review in reviews %}
     <tr><td>{{ review['review_text'] }}</td><td>{{ review['score']}}</td></tr>
     {% endfor %}
     </table>
-    <script src="https://code.jquery.com/jquery-1.10.2.min.js"></script>
-    <script src="static/js/bootstrap.min.js"></script>
+
+
 
     </div><!-- /.container -->
 
@@ -93,7 +113,7 @@
     <!-- Bootstrap core JavaScript
     ================================================== -->
     <!-- Placed at the end of the document so the pages load faster -->
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
-    <script src="../../dist/js/bootstrap.min.js"></script>
+{#    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>#}
+    <script src="static/bootstrap/js/bootstrap.min.js"></script>
   </body>
 </html>
