@@ -4,9 +4,11 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 from sklearn.linear_model import LogisticRegression
+from sklearn.ensemble import RandomForestClassifier
 from sklearn.cross_validation import train_test_split
 from sklearn import metrics
 from sklearn.cross_validation import cross_val_score
+from sklearn import preprocessing
 
 from operator import itemgetter
 
@@ -59,16 +61,28 @@ def extract_features(review):
     # Feature #4: similarity between review text and product description
 
 
-    # Feature #5: number of reviews of the same reviewer in the same category
-    # query = "SELECT COUNT(*) FROM reviews WHERE user_id = '" + review['user_id'] + "'"
-    # cur.execute(query)
-    # number_of_reviews = cur.fetchall()[0]
-    # features.append(number_of_reviews)
+    # Feature #5 & #6: the reviewer activity and helpfulness
+    query = "SELECT * FROM reviewers WHERE user_id = '" + review['user_id'] + "'"
+    cur.execute(query)
+    result = cur.fetchall()
+    if len(result) == 0:
+        reviewer_activity_score = 0
+        reviewer_helpfulness_score = 0
+    else:
+        reviewer = result[0]
+        reviewer_activity_score = reviewer['no_reviews']-1
+        if reviewer['total_votes']-review['no_votes'] == 0:
+            reviewer_helpfulness_score = 0
+        else:
+            reviewer_helpfulness_score = (reviewer['total_helpful_votes']-review['no_helpful_votes'])/(reviewer['total_votes']-review['no_helpful_votes'])
 
+    features.append(reviewer_activity_score)
+    features.append(reviewer_helpfulness_score)
 
-    # Feature #6: similarity between review text and the centroid of first 3 helpful reviews
+    # Feature #7: similarity between review text and the centroid of first 3 helpful reviews
 
-    return features
+    # converting to float so that features can be scaled
+    return [float(i) for i in features]
 
 def train_model():
     plot_Y = []
@@ -95,7 +109,7 @@ def train_model():
         else:
             training_y.append(1)
             no_helpful_reviews += 1
-        print features, helpfulness_score
+        #print features, helpfulness_score
 
         training_X.append(features)
 
@@ -106,17 +120,39 @@ def train_model():
     print len(training_data), no_helpful_reviews
 
     training_y = np.asarray(training_y)
+    training_X = np.array(training_X)
+
+    # Scaling
+    min_max_scaler = preprocessing.MinMaxScaler()
+    training_X_scaled = min_max_scaler.fit_transform(training_X)
+
 
     # Cross-validation
-    scores = cross_val_score(LogisticRegression(), training_X, training_y, scoring='roc_auc', cv=10)
+    scores = cross_val_score(RandomForestClassifier(), training_X_scaled, training_y, scoring='roc_auc', cv=10)
     print 'cross_val_score =', np.mean(scores)
 
-    # Training
-    model = LogisticRegression()
-    model = model.fit(training_X, training_y)
+    # Plotting ROC Curve
+    X_train, X_test, y_train, y_test = train_test_split(training_X_scaled, training_y, test_size=.5, random_state=0)
+    predicted_y = RandomForestClassifier().fit(X_train, y_train).predict_proba(X_test)
+    fpr, tpr, thresholds = metrics.roc_curve(y_test, predicted_y[:,1], pos_label=1)
+
+    plt.figure()
+    plt.plot(fpr, tpr, label='ROC curve (area = %0.2f)')# % roc_auc[2])
+    plt.plot([0, 1], [0, 1], 'k--')
+    plt.xlim([0.0, 1.0])
+    plt.ylim([0.0, 1.05])
+    plt.xlabel('False Positive Rate')
+    plt.ylabel('True Positive Rate')
+    plt.title('Receiver operating characteristic example')
+    plt.legend(loc="lower right")
+    plt.show()
 
     # Plotting
     #simple_plot(plot_X, plot_Y)
+
+    # Training
+    model = RandomForestClassifier().fit(training_X_scaled, training_y)
+    print model.feature_importances_
 
     return model
 
