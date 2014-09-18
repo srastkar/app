@@ -13,10 +13,11 @@ app = Flask(__name__)
 
 @app.route('/')
 def cities_page():
-    return render_template('reviews.html', reviews=[])
+    return render_template('index.html')
 
 @app.route('/', methods=['POST', 'GET'])
 def retrieve_reviews():
+    #flask.request.args.get(<form_input_name>, None)
     product_id = request.form.get('product')
     db = mdb.connect(user="root", host="localhost", passwd="moosh", db="amazon", charset='utf8')
     cur = db.cursor()

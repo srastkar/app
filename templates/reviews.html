@@ -28,7 +28,8 @@
     <script>
     $(document).ready(function()
     {
-        $('#review_date').slider().on('slide', function(ev){})
+        $('#review_date').slider().on('slide', function(ev){});
+        $('#scroll_list').animate();
     })
 
     </script>
@@ -67,7 +68,14 @@
 
 <br><br>
 
-
+<div id="scroll_list">
+		<div id="review1" class="result">
+			<div class="result_title"><b>Canon</b>, reviews</div>
+			<div class="properties">
+				<span class="commute1_text">Commute:4 min</span>
+			</div>
+		</div>
+</div>
 
     <div class="container">
       <div class="starter-template">
