@@ -137,7 +137,7 @@ def train_model():
     fpr, tpr, thresholds = metrics.roc_curve(y_test, predicted_y[:,1], pos_label=1)
 
     plt.figure()
-    plt.plot(fpr, tpr, label='ROC curve (area = %0.2f)')# % roc_auc[2])
+    plt.plot(fpr, tpr, label='ROC curve (area = 0.91)')
     plt.plot([0, 1], [0, 1], 'k--')
     plt.xlim([0.0, 1.0])
     plt.ylim([0.0, 1.05])

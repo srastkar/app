@@ -38,7 +38,9 @@ def retrieve_reviews():
     query_results = cur.fetchall()
     reviews = []
     for result in query_results:
+        #reviews.append(dict(review_text=result[0], score=result[1], review_length=len(result[0].split())))
         reviews.append(dict(review_text=result[0], score=result[1]))
+    print reviews
     return render_template('reviews.html', reviews=reviews)
 
 

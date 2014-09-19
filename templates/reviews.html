@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="en">
   <head>
@@ -25,12 +24,22 @@
     <script src="/static/jquery.js"></script>
     <script src="static/bootstrap/js/bootstrap.min.js"></script>
     <script src="/static/slider/js/bootstrap-slider.js"></script>
+
     <script>
+    function filter(ev)
+    {
+        var length_interval = $("#slider_review_length").val();
+        var date_interval = $("#slider_review_date").val();
+        var star_interval = $("#slider_review_star_rating").val();
+{#        {% for review in reviews | sort(attribute='review_length')  %}#}
+
+    }
+
     $(document).ready(function()
     {
-        $('#review_date').slider().on('slide', function(ev){});
-        $('#scroll_list').animate();
-    })
+        $('.slider').slider().on('slideStop', function(ev){
+		filter(ev)})
+	})
 
     </script>
 
@@ -44,77 +53,66 @@
   </head>
 
   <body>
+     <!-- Navigation -->
+    <nav class="navbar navbar-default navbar-fixed-top" role="navigation">
+        <div class="container">
+            <!-- Brand and toggle get grouped for better mobile display -->
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                    <span class="sr-only">Toggle navigation</span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                    <span class="icon-bar"></span>
+                </button>
+                <a class="navbar-brand" href="#">Uncovering Helpful Amazon Reviews</a>
+            </div>
+            <!-- Collect the nav links, forms, and other content for toggling -->
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <a href="#">About</a>
+                    </li>
+                    <li>
+                        <a href="#">Slides</a>
+                    </li>
 
-    <div class="navbar navbar-inverse navbar-fixed-top" role="navigation">
-      <div class="container-fluid">
-        <div class="navbar-header">
-          <button type="button" class="navbar-toggle collapsed" data-toggle="collapse" data-target=".navbar-collapse">
-            <span class="sr-only">Toggle navigation</span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-            <span class="icon-bar"></span>
-          </button>
-          <a class="navbar-brand" href="#">Helpful Amazon Reviews</a>
+                </ul>
+            </div>
+            <!-- /.navbar-collapse -->
         </div>
-        <div class="navbar-collapse collapse">
-          <ul class="nav navbar-nav navbar-right">
-            <li><a href="#">About</a></li>
-            <li><a href="#">Help</a></li>
-          </ul>
+        <!-- /.container -->
+    </nav>
 
-        </div>
-      </div>
-    </div>
+     <br><br>
 
-<br><br>
-
-<div id="scroll_list">
-		<div id="review1" class="result">
-			<div class="result_title"><b>Canon</b>, reviews</div>
-			<div class="properties">
-				<span class="commute1_text">Commute:4 min</span>
-			</div>
-		</div>
-</div>
 
     <div class="container">
-      <div class="starter-template">
-        <h1>Helpful Amazon Reviews</h1>
-        <form class="navbar-form navbar-center" action="." method="post">
-            <!-- <input type="text" class="form-control" name='product' placeholder="Search..."> -->
-            <select class="form-control" name="product">
-                <option selected="selected">Choose a product ...</option>
-                <option value='B00004WCIC'>Canon RC-1 Wireless Remote Control for Select DSLR Cameras</option>
-                <option value='B0009GZSSO'>Canon Powershot S2 IS 5MP Digital Camera with 12x Optical Image Stabilized Zoom</option>
-                <option value='B000MW3YEU'>Panasonic Lumix DMC-TZ3S 7.2MP Digital Camera with 10x Optical Image Stabilized Zoom (Silver)</option>
-                <option value='B000Q3043Y'>Canon PowerShot Pro Series S5 IS 8.0MP Digital Camera with 12x Optical Image Stabilized Zoom</option>
-                <option value='B000N386VE'>Panasonic Lumix DMC-TZ3K 7.2MP Digital Camera with 10x Optical Image Stabilized Zoom (Black)</option>
-                <option value='B00091S0WA'>Sony LCS-CST General Purpose Soft Carrying Case for Slim Cybershot Digital Cameras</option>
-                <option value='B000093UDQ'>Digital Concepts TR-60N Camera Tripod with Carrying Case</option>
-                <option value='B0002EMY9Y'>Nikon SB-600 Speedlight Flash for Nikon Digital SLR Cameras</option>
-                <option value='B000KKPN5C'>Nikon SB-400 AF Speedlight Flash for Nikon Digital SLR Cameras</option>
-                <option value='B000EXT5AY'>Tamron AF 70-300mm f/4.0-5.6 Di LD Macro Zoom Lens for Konica Minolta and Sony Digital SLR Cameras</option>
-            </select>
-            <input type="submit" class="form-control" value="Get Reviews!" />
-          </form>
-      </div>
-    <br><br>
+    	<div class="row">
+  			<div class="col-md-4" id="leftCol">
+				    <b>Filter by length:</b><br>
+                    Shortest &nbsp;
+                    <input class="slider" id="slider_review_length" data-slider-min="0" data-slider-max="10" data-slider-step="1" data-slider-value="[0,10]" data-slider-tooltip="hide">
+                    Longest
+                    <br><br><b>Filter by date:</b><br>
+                    Oldest &nbsp;&nbsp;&nbsp;&nbsp;
+                    <input class="slider" id="slider_review_date" data-slider-min="0" data-slider-max="10" data-slider-step="1" data-slider-value="[0,10]" data-slider-tooltip="hide">
+                    Newest
+                    <br><br><b>Filter by star rating:</b><br>
+                    1-Star &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                    <input class="slider" id="slider_review_star_rating" data-slider-min="1" data-slider-max="5" data-slider-step="1" data-slider-value="[1,5]" >
+                    5-Star
 
+      		</div>
 
-    <input id="review_date" data-slider-tooltip="hide" value="2" data-slider-value="2">
-
-
-    <br><br>
-
-    <table class="table table-hover">
-{#    <tr><th>Review</th><th>Number of Votes</th><th>Number of Helpful Votes</th></tr>#}
-    {% for review in reviews %}
-    <tr><td>{{ review['review_text'] }}</td><td>{{ review['score']}}</td></tr>
-    {% endfor %}
-    </table>
-
-
-
+            <div class="col-md-7">
+                <table class="table table-hover" id="reviews_table">
+                <tr><th>Review</th><th>Score</th></tr>
+                {% for review in reviews %}
+                    <tr><td>{{ review['review_text'] }}</td><td>{{ review['score']}}</td></tr>
+                {% endfor %}
+                </table>
+            </div>
+        </div>
     </div><!-- /.container -->
 
 
