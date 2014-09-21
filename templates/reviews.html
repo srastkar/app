@@ -108,7 +108,7 @@
                 <table class="table table-hover" id="reviews_table">
                 <tr><th>Review</th><th>Score</th></tr>
                 {% for review in reviews %}
-                    <tr><td>{{ review['review_text'] }}</td><td>{{ review['score']}}</td></tr>
+                    <tr><td>{{ review['review_text'] }}</td><td>{{ review['predicted_score']}}</td><td>{{ review['no_helpful_votes']}}</td><td>{{ review['no_votes']}}</td></tr>
                 {% endfor %}
                 </table>
             </div>

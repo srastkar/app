@@ -5,11 +5,7 @@ import pymysql as mdb
 
 app = Flask(__name__)
 
-#
-# def index():
-# 	return render_template("index.html",
-#         title = 'Home', user = { 'nickname': 'Miguel' },
-#         )
+
 products = {'B00004WCIC': "Canon RC-1 Wireless Remote Control for Select DSLR Cameras",
                 'B0009GZSSO': "Canon Powershot S2 IS 5MP Digital Camera with 12x Optical Image Stabilized Zoom",
                 'B000MW3YEU': "Panasonic Lumix DMC-TZ3S 7.2MP Digital Camera with 10x Optical Image Stabilized Zoom (Silver)",
@@ -33,15 +29,10 @@ def retrieve_reviews():
     product_id = [key for key in products if products[key]==product_title][0]
 
     db = mdb.connect(user="root", host="localhost", passwd="moosh", db="amazon", charset='utf8')
-    cur = db.cursor()
-    cur.execute("SELECT review_text, score FROM scored_reviews WHERE product_id = '"+ product_id + "' LIMIT 5;")
+    cur = db.cursor(mdb.cursors.DictCursor)
+    cur.execute("SELECT * FROM web_scored_reviews WHERE product_id = '"+ product_id + "' AND no_votes < 10") # AND predicted_score < 1")
     query_results = cur.fetchall()
-    reviews = []
-    for result in query_results:
-        #reviews.append(dict(review_text=result[0], score=result[1], review_length=len(result[0].split())))
-        reviews.append(dict(review_text=result[0], score=result[1]))
-    print reviews
-    return render_template('reviews.html', reviews=reviews)
+    return render_template('reviews.html', reviews=query_results)
 
 
 if __name__ == '__main__':

@@ -151,28 +151,43 @@ def train_model():
     #simple_plot(plot_X, plot_Y)
 
     # Training
-    model = RandomForestClassifier().fit(training_X_scaled, training_y)
+    model = RandomForestClassifier(n_estimators=10000).fit(training_X_scaled, training_y)
     print model.feature_importances_
 
-    return model
+    return model, min_max_scaler
 
 
-def test(model):
+def test(model, scaler):
     test_products = ['B00004WCIC', 'B0009GZSSO', 'B000MW3YEU', 'B000Q3043Y', 'B000N386VE', 'B00091S0WA', 'B000093UDQ', 'B0002EMY9Y', 'B000KKPN5C', 'B000EXT5AY']
     for a_product in test_products:
         scored_reviews = []
-        query = "SELECT review_text, no_votes, no_helpful_votes, score FROM reviews WHERE product_id IN ('" + a_product + "') AND no_votes < 2"
+        query = "SELECT * FROM reviews WHERE product_id IN ('" + a_product + "')"
         cur.execute(query)
         test_data = cur.fetchall()
         for review in test_data:
+            review.pop("price", None)
             features = extract_features(review)
-            predicted_helpfulness_score = model.predict_proba(features)[0][1]
-            scored_reviews.append((predicted_helpfulness_score, review))
+            scaled_features = scaler.transform(np.array([features]))
+            #print scaled_features
+            predicted_helpfulness_score = model.predict_proba(scaled_features)[0][1]
+            print predicted_helpfulness_score
+            scored_reviews.append((review, predicted_helpfulness_score))
 
-        sorted_scored_reviews = sorted(scored_reviews, key=itemgetter(0), reverse=True)
+        sorted_scored_reviews = sorted(scored_reviews, key=itemgetter(1), reverse=True)
 
         for top_review in sorted_scored_reviews[0:20]:
-            query = 'INSERT INTO scored_reviews(product_id, review_text, score) VALUES("' + a_product + '", "' + top_review[1]['review_text'] + '", "' + str(top_review[0]) + '")'
+            column_values = []
+            for value in top_review[0].values():
+                if type(value) == str:
+                    column_values.append("\""+value+"\"")
+                else:
+                    column_values.append(str(value))
+
+            query = 'INSERT INTO web_scored_reviews' + \
+                    "(" + ", ".join(top_review[0].keys()) + ", predicted_score" + ") " + \
+                    'VALUES' + \
+                    "(" + ", ".join(column_values) + ", " + str(top_review[1]) + ")"
+            #print query
             cur.execute(query)
 
 
@@ -181,8 +196,11 @@ if __name__ == '__main__':
     con = mdb.connect('localhost', 'root', 'moosh', 'amazon') #host, user, password, #database
     cur = con.cursor(mdb.cursors.DictCursor)
 
-    prediction_model = train_model()
-    #test(prediction_model)
+    print('Training...')
+    prediction_model, scaler = train_model()
+
+    print('Testing...')
+    test(prediction_model, scaler)
 
     con.commit()
     con.close()
