@@ -14,6 +14,7 @@ from operator import itemgetter
 
 import nltk
 from nltk.stem.porter import PorterStemmer
+import time
 
 def stem_tokens(tokens):
     stemmer = PorterStemmer()
@@ -90,8 +91,13 @@ def train_model():
     no_helpful_reviews = 0
     training_X = []
     training_y = []
-    training_products = ['B00007E7JU', 'B000RZQZM0', 'B00009R6TA', 'B000NK8EWI', 'B000NP3DJW', 'B00005LEN4', 'B00009XVCZ', 'B000I1ZWRW', 'B000I7TV3W', 'B0002Y5WZM', 'B000NK3H4S',
-            'B000NK6J6Q', 'B000HAOVGM', 'B0007QKN22', 'B0007QKN6S', 'B000KJQ1DG', 'B000EVLS4C', 'B00004THCZ', 'B000EMWBT2', 'B000Q30420']
+
+    query = "SELECT product_id from popular_2012_camera_products"
+    cur.execute(query)
+    products = cur.fetchall()
+    training_products = []
+    for product in products:
+        training_products.append(product['product_id'])
 
     all_training_products = "','".join(training_products)
 
@@ -103,21 +109,20 @@ def train_model():
 
     for review in training_data:
         helpfulness_score = review['no_helpful_votes']/float(review['no_votes'])
-        features = extract_features(review)
-        if helpfulness_score < 0.6:
+        if helpfulness_score < 0.3:
             training_y.append(0)
-        else:
+            training_X.append(extract_features(review))
+        elif helpfulness_score > 0.7:
             training_y.append(1)
             no_helpful_reviews += 1
+            training_X.append(extract_features(review))
         #print features, helpfulness_score
-
-        training_X.append(features)
 
         # for plotting purposes
         # plot_Y.append(helpfulness_score)
         # plot_X.append(features[1])
 
-    print len(training_data), no_helpful_reviews
+    print len(training_y), no_helpful_reviews
 
     training_y = np.asarray(training_y)
     training_X = np.array(training_X)
@@ -128,7 +133,7 @@ def train_model():
 
 
     # Cross-validation
-    scores = cross_val_score(RandomForestClassifier(), training_X_scaled, training_y, scoring='roc_auc', cv=10)
+    scores = cross_val_score(RandomForestClassifier(n_estimators=1000), training_X_scaled, training_y, scoring='roc_auc', cv=10)
     print 'cross_val_score =', np.mean(scores)
 
     # Plotting ROC Curve
@@ -151,17 +156,21 @@ def train_model():
     #simple_plot(plot_X, plot_Y)
 
     # Training
-    model = RandomForestClassifier(n_estimators=10000).fit(training_X_scaled, training_y)
+    model = RandomForestClassifier(n_estimators=1000).fit(training_X_scaled, training_y)
     print model.feature_importances_
 
     return model, min_max_scaler
 
 
 def test(model, scaler):
-    test_products = ['B00004WCIC', 'B0009GZSSO', 'B000MW3YEU', 'B000Q3043Y', 'B000N386VE', 'B00091S0WA', 'B000093UDQ', 'B0002EMY9Y', 'B000KKPN5C', 'B000EXT5AY']
+    query = "SELECT product_id from popular_recent_camera_products order by no_reviews desc limit 50"
+    cur.execute(query)
+    test_products = cur.fetchall()
+
     for a_product in test_products:
+        product_id = a_product["product_id"]
         scored_reviews = []
-        query = "SELECT * FROM reviews WHERE product_id IN ('" + a_product + "')"
+        query = "SELECT * FROM reviews WHERE product_id IN ('" + product_id + "')"
         cur.execute(query)
         test_data = cur.fetchall()
         for review in test_data:
@@ -175,7 +184,7 @@ def test(model, scaler):
 
         sorted_scored_reviews = sorted(scored_reviews, key=itemgetter(1), reverse=True)
 
-        for top_review in sorted_scored_reviews[0:20]:
+        for top_review in sorted_scored_reviews:
             column_values = []
             for value in top_review[0].values():
                 if type(value) == str:
@@ -187,21 +196,25 @@ def test(model, scaler):
                     "(" + ", ".join(top_review[0].keys()) + ", predicted_score" + ") " + \
                     'VALUES' + \
                     "(" + ", ".join(column_values) + ", " + str(top_review[1]) + ")"
-            #print query
+            print query
             cur.execute(query)
 
 
 
 if __name__ == '__main__':
+    print time.ctime()
     con = mdb.connect('localhost', 'root', 'moosh', 'amazon') #host, user, password, #database
     cur = con.cursor(mdb.cursors.DictCursor)
 
+    print time.ctime()
     print('Training...')
     prediction_model, scaler = train_model()
 
+    print time.ctime()
     print('Testing...')
     test(prediction_model, scaler)
 
+    print time.ctime()
     con.commit()
     con.close()
 
