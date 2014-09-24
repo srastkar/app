@@ -22,9 +22,9 @@ def retrieve_reviews():
     query = "SELECT product_id FROM popular_recent_camera_products WHERE title = '" + product_title + "'"
     cur.execute(query)
     product_id = cur.fetchall()[0]["product_id"]
-    cur.execute("SELECT * FROM web_scored_reviews WHERE product_id = '"+ product_id + "' AND no_votes < 5 ORDER BY predicted_score DESC limit 20") #   AND predicted_score < 1")
+    cur.execute("SELECT * FROM web_scored_reviews WHERE product_id = '"+ product_id + "' AND no_votes < 5  AND predicted_score < 1 ORDER BY predicted_score DESC limit 20") #  ")
     query_results = cur.fetchall()
-    return render_template('reviews.html', reviews=query_results)
+    return render_template('reviews.html', reviews=query_results, title=product_title)
 
 
 if __name__ == '__main__':

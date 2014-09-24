@@ -88,8 +88,10 @@
 
     <div class="container">
     	<div class="row">
-  			<div class="col-md-4" id="leftCol">
-				    <b>Filter by length:</b><br>
+  			<div class="col-md-3" id="leftCol">
+                <br>
+                <img src="static/download.jpg" alt={{ title }} class="img-thumbnail">
+				    {#<b>Filter by length:</b><br>
                     Shortest &nbsp;
                     <input class="slider" id="slider_review_length" data-slider-min="0" data-slider-max="10" data-slider-step="1" data-slider-value="[0,10]" data-slider-tooltip="hide">
                     Longest
@@ -100,15 +102,16 @@
                     <br><br><b>Filter by star rating:</b><br>
                     1-Star &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
                     <input class="slider" id="slider_review_star_rating" data-slider-min="1" data-slider-max="5" data-slider-step="1" data-slider-value="[1,5]" >
-                    5-Star
+                    5-Star#}
 
       		</div>
 
-            <div class="col-md-7">
+            <div class="col-md-9">
+                <h3> Reviews for {{ title }} </h3>
                 <table class="table table-hover" id="reviews_table">
-                <tr><th>Review</th><th>Score</th></tr>
+                <tr><th width="75%">Review</th><th width="12%">Predicted Score</th><th width="13%">Amazon Score</th></tr>
                 {% for review in reviews %}
-                    <tr><td>{{ review['review_text'] }}</td><td>{{ review['predicted_score']}}</td><td>{{ review['no_helpful_votes']}}</td><td>{{ review['no_votes']}}</td></tr>
+                    <tr><td>{{ review['review_text'] }}</td><td>{{ review['predicted_score']}}</td><td>{{ review['no_helpful_votes']}} out of {{ review['no_votes']}}</td></tr>
                 {% endfor %}
                 </table>
             </div>
