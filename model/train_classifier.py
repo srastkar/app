@@ -2,6 +2,7 @@ import pymysql as mdb
 
 import numpy as np
 import matplotlib.pyplot as plt
+import matplotlib as mpl
 
 from sklearn.linear_model import LogisticRegression
 from sklearn.ensemble import RandomForestClassifier
@@ -29,6 +30,9 @@ def tokenize_and_stem(text):
     return stems
 
 def simple_plot(plot_X, plot_Y):
+    mpl.rcParams['axes.labelsize'] = 'large'
+    mpl.rcParams['font.size'] = '20'
+
     N = len(plot_X)
 
     colors = np.random.rand(N)
@@ -46,39 +50,39 @@ def extract_features(review):
     review_length = len(review['review_text'].split())
     features.append(review_length)
 
-    # Feature #2: star rating of the review
-    features.append(review['score'])
-
-    # Feature #3: overlap between product title and review text
-    title_tokens = tokenize_and_stem(review['title'])
-    review_tokens = tokenize_and_stem(review['review_text'])
-    title_overlap = 0
-    for token in review_tokens:
-        if token in title_tokens:
-            title_overlap += 1
-
-    features.append(title_overlap)
-
-    # Feature #4: similarity between review text and product description
-
-
-    # Feature #5 & #6: the reviewer activity and helpfulness
-    query = "SELECT * FROM reviewers WHERE user_id = '" + review['user_id'] + "'"
-    cur.execute(query)
-    result = cur.fetchall()
-    if len(result) == 0:
-        reviewer_activity_score = 0
-        reviewer_helpfulness_score = 0
-    else:
-        reviewer = result[0]
-        reviewer_activity_score = reviewer['no_reviews']-1
-        if reviewer['total_votes']-review['no_votes'] == 0:
-            reviewer_helpfulness_score = 0
-        else:
-            reviewer_helpfulness_score = (reviewer['total_helpful_votes']-review['no_helpful_votes'])/(reviewer['total_votes']-review['no_helpful_votes'])
-
-    features.append(reviewer_activity_score)
-    features.append(reviewer_helpfulness_score)
+    # # Feature #2: star rating of the review
+    # features.append(review['score'])
+    #
+    # # Feature #3: overlap between product title and review text
+    # title_tokens = tokenize_and_stem(review['title'])
+    # review_tokens = tokenize_and_stem(review['review_text'])
+    # title_overlap = 0
+    # for token in review_tokens:
+    #     if token in title_tokens:
+    #         title_overlap += 1
+    #
+    # features.append(title_overlap)
+    #
+    # # Feature #4: similarity between review text and product description
+    #
+    #
+    # # Feature #5 & #6: the reviewer activity and helpfulness
+    # query = "SELECT * FROM reviewers WHERE user_id = '" + review['user_id'] + "'"
+    # cur.execute(query)
+    # result = cur.fetchall()
+    # if len(result) == 0:
+    #     reviewer_activity_score = 0
+    #     reviewer_helpfulness_score = 0
+    # else:
+    #     reviewer = result[0]
+    #     reviewer_activity_score = reviewer['no_reviews']-1
+    #     if reviewer['total_votes']-review['no_votes'] == 0:
+    #         reviewer_helpfulness_score = 0
+    #     else:
+    #         reviewer_helpfulness_score = (reviewer['total_helpful_votes']-review['no_helpful_votes'])/(reviewer['total_votes']-review['no_helpful_votes'])
+    #
+    # features.append(reviewer_activity_score)
+    # features.append(reviewer_helpfulness_score)
 
     # Feature #7: similarity between review text and the centroid of first 3 helpful reviews
 
@@ -92,7 +96,7 @@ def train_model():
     training_X = []
     training_y = []
 
-    query = "SELECT product_id from popular_2012_camera_products"
+    query = "SELECT product_id from popular_2012_camera_products LIMIT 20"
     cur.execute(query)
     products = cur.fetchall()
     training_products = []
@@ -105,24 +109,30 @@ def train_model():
     cur.execute(training_data_query)
     training_data = cur.fetchall()
 
-    print("got all the data")
+    print("Retrieved all the data:")
+    print(str(len(training_data)) + " reviews")
 
     for review in training_data:
         helpfulness_score = review['no_helpful_votes']/float(review['no_votes'])
+        features = extract_features(review)
         if helpfulness_score < 0.3:
             training_y.append(0)
-            training_X.append(extract_features(review))
+            training_X.append(features)
         elif helpfulness_score > 0.7:
             training_y.append(1)
             no_helpful_reviews += 1
-            training_X.append(extract_features(review))
+            training_X.append(features)
         #print features, helpfulness_score
 
         # for plotting purposes
-        # plot_Y.append(helpfulness_score)
-        # plot_X.append(features[1])
+        if features[0] < 1200:
+            plot_Y.append(helpfulness_score)
+            plot_X.append(features[0])
 
     print len(training_y), no_helpful_reviews
+
+    # Plotting
+    simple_plot(plot_X, plot_Y)
 
     training_y = np.asarray(training_y)
     training_X = np.array(training_X)
@@ -152,8 +162,7 @@ def train_model():
     plt.legend(loc="lower right")
     plt.show()
 
-    # Plotting
-    #simple_plot(plot_X, plot_Y)
+
 
     # Training
     model = RandomForestClassifier(n_estimators=1000).fit(training_X_scaled, training_y)
@@ -203,6 +212,7 @@ def test(model, scaler):
 
 if __name__ == '__main__':
     print time.ctime()
+    print('Reitrieving data...')
     con = mdb.connect('localhost', 'root', 'moosh', 'amazon') #host, user, password, #database
     cur = con.cursor(mdb.cursors.DictCursor)
 

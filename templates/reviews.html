@@ -8,15 +8,22 @@
     <meta name="author" content="">
     <link rel="icon" href="../../favicon.ico">
 
-    <title>Uncovering Helpful Amazon Reviews</title>
+    <title>MyReviewRater - Uncovering Helpful Amazon Reviews</title>
 
 
 
-    <!-- Bootstrap core CSS -->
-    <link href="/static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+    <!-- Bootstrap Core CSS -->
+    <link href="static/bootstrap/css/bootstrap.min.css" rel="stylesheet">
 
-    <!-- Custom styles for this template -->
-    <link href="static/starter-template.css" rel="stylesheet">
+
+
+    <!-- Custom Fonts -->
+    <link href="font-awesome-4.1.0/css/font-awesome.min.css" rel="stylesheet" type="text/css">
+    <link href="http://fonts.googleapis.com/css?family=Lato:300,400,700,300italic,400italic,700italic" rel="stylesheet" type="text/css">
+
+    <script src="static/jquery.js"></script>
+    <script src="static/bootstrap/js/bootstrap.min.js"></script>
+    <script src="static/bootstrap3-typeahead.js"></script>
 
     <!-- Slider for Bootstrap -->
     <link href="/static/slider/css/slider.css" rel="stylesheet">
@@ -64,7 +71,7 @@
                     <span class="icon-bar"></span>
                     <span class="icon-bar"></span>
                 </button>
-                <a class="navbar-brand" href="#">Uncovering Helpful Amazon Reviews</a>
+                <a class="navbar-brand" href="#">MyReviewRater</a>
             </div>
             <!-- Collect the nav links, forms, and other content for toggling -->
             <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
@@ -107,7 +114,7 @@
       		</div>
 
             <div class="col-md-9">
-                <h3> Reviews for {{ title }} </h3>
+                <h2> Reviews for {{ title }} </h2>
                 <table class="table table-hover" id="reviews_table">
                 <tr><th width="75%">Review</th><th width="12%">Predicted Score</th><th width="13%">Amazon Score</th></tr>
                 {% for review in reviews %}

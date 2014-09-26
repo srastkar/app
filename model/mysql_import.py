@@ -5,8 +5,10 @@ con = mdb.connect('localhost', 'root', 'moosh', 'amazon')  # host, user, passwor
 cur = con.cursor()
 
 f = open("/home/sarah/descriptions.txt", "r")
-file_text = f.read(1000000000)
+f.seek(1000000000)
+file_text = f.read()
 products = file_text.split("\n\n")
+products.pop(0)
 total = len(products)
 
 count = 0
