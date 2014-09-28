@@ -118,7 +118,8 @@
     	<div class="row">
   			<div class="col-md-3" id="leftCol">
                 <br>
-                <img src="static/img/download.jpg" alt={{ title }} class="img-thumbnail">
+                {% set product_image_file = "static/img/Cameras/" + reviews[0]['product_id'] + ".jpg" %}
+                <img src={{product_image_file}} alt={{ title }} class="img-thumbnail">
 				    {#<b>Filter by length:</b><br>
                     Shortest &nbsp;
                     <input class="slider" id="slider_review_length" data-slider-min="0" data-slider-max="10" data-slider-step="1" data-slider-value="[0,10]" data-slider-tooltip="hide">
@@ -135,14 +136,14 @@
       		</div>
 
             <div class="col-md-9">
-                <h2> Reviews for {{ title }} </h2>
+                <h2> {{ title }} </h2>
                 <table class="table table-hover" id="reviews_table">
                 <thead><tr><th width="75%">Review</th><th width="12%">Predicted Score</th><th width="13%">Amazon Score</th></tr></thead>
                 <tbody>
                 {% for review in reviews %}
                     <tr><td><div class = 'review'>
                          {% set score_image_file = "static/img/stars-" + review['score']|string + ".gif" %}
-                         <image src={{score_image_file}} >
+                         <image src={{score_image_file}} />
                         <b>{{ review['summary'] }}</b>, {{ review['time'] }}<br>
                         {{ review['review_text'] }}</div></td><td>{{ review['predicted_score']}}</td><td>{{ review['no_helpful_votes']}} out of {{ review['no_votes']}}</td></tr>
                 {% endfor %}

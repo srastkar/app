@@ -47,6 +47,37 @@ def review_length_box_plot():
     plt.boxplot([bin_100, bin_200, bin_300, bin_over_300], 0)
     plt.show()
 
+def plot_roc():
+    # # Plotting ROC Curve
+    # X_train, X_test, y_train, y_test = train_test_split(training_X_scaled, training_y, test_size=.5, random_state=0)
+    # predicted_y = RandomForestClassifier().fit(X_train, y_train).predict_proba(X_test)
+    # fpr, tpr, thresholds = metrics.roc_curve(y_test, predicted_y[:,1], pos_label=1)
+    #
+    # plt.figure()
+    # plt.plot(fpr, tpr, label='ROC curve (area = )')
+    # plt.plot([0, 1], [0, 1], 'k--')
+    # plt.xlim([0.0, 1.0])
+    # plt.ylim([0.0, 1.05])
+    # plt.xlabel('False Positive Rate')
+    # plt.ylabel('True Positive Rate')
+    # plt.title('Receiver operating characteristic example')
+    # plt.legend(loc="lower right")
+    # plt.show()
+
+
+def simple_plot(plot_X, plot_Y):
+    mpl.rcParams['axes.labelsize'] = 'large'
+    mpl.rcParams['font.size'] = '20'
+
+    N = len(plot_X)
+
+    colors = np.random.rand(N)
+    area = np.pi * (15 * np.random.rand(N))**2 # 0 to 15 point radiuses
+
+    plt.scatter(plot_X, plot_Y, s=area, c=colors, alpha=0.5)
+    plt.show()
+
+
 review_length_box_plot()
 
 
