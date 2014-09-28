@@ -96,16 +96,18 @@ def train_model():
     training_X = []
     training_y = []
 
-    query = "SELECT product_id from popular_2012_camera_products LIMIT 20"
+    query = "SELECT product_id from popular_recent_camera_products"
     cur.execute(query)
     products = cur.fetchall()
-    training_products = []
+    test_products = []
     for product in products:
-        training_products.append(product['product_id'])
+        test_products.append(product['product_id'])
 
-    all_training_products = "','".join(training_products)
+    all_test_products = "','".join(test_products)
 
-    training_data_query = "SELECT title, user_id, review_text, no_votes, no_helpful_votes, score FROM reviews WHERE product_id IN ('" + all_training_products + "') AND no_votes > 10"
+    # time > 1199145600: after 2008
+    training_data_query = "SELECT title, user_id, review_text, no_votes, no_helpful_votes, score FROM reviews " \
+                          "WHERE product_id NOT IN ('" + all_test_products + "') AND time > 1199145600 AND no_votes > 10"
     cur.execute(training_data_query)
     training_data = cur.fetchall()
 
@@ -211,8 +213,6 @@ def test(model, scaler):
 
 
 if __name__ == '__main__':
-    print time.ctime()
-    print('Reitrieving data...')
     con = mdb.connect('localhost', 'root', 'moosh', 'amazon') #host, user, password, #database
     cur = con.cursor(mdb.cursors.DictCursor)
 

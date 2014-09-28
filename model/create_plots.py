@@ -7,7 +7,7 @@ import matplotlib as mpl
 from pylab import *
 
 
-def box_plot():
+def review_length_box_plot():
     # get data
     con = mdb.connect('localhost', 'root', 'moosh', 'amazon')
     cur = con.cursor(mdb.cursors.DictCursor)
@@ -46,6 +46,7 @@ def box_plot():
     plt.ylim([-0.05, 1.05])
     plt.boxplot([bin_100, bin_200, bin_300, bin_over_300], 0)
     plt.show()
-box_plot()
+
+review_length_box_plot()
 
 
