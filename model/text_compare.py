@@ -6,9 +6,6 @@ import numpy as np
 from sklearn.feature_extraction.text import TfidfVectorizer
 from nltk.stem.porter import PorterStemmer
 
-token_dict = {}
-stemmer = PorterStemmer()
-
 def stem_tokens(tokens, stemmer):
     stemmed = []
     for item in tokens:
@@ -17,24 +14,10 @@ def stem_tokens(tokens, stemmer):
 
 def tokenize(text):
     tokens = nltk.word_tokenize(text)
+    stemmer = PorterStemmer()
     stems = stem_tokens(tokens, stemmer)
     return stems
 
-text_corpus = ["The camera has great zoom",
-               "improved could be zoom improved could be zoom",
-                "zoom could be improved"]
-
-print text_corpus
-
-corpus = []
-for text in text_corpus:
-    lowers_text = text.lower()
-    no_punctuation_tex = lowers_text.translate(None, string.punctuation)
-    corpus.append(no_punctuation_tex)
-
-#making TF-IDF model -> this can take some time
-tfidf = TfidfVectorizer(tokenizer=tokenize, stop_words='english')
-response = tfidf.fit_transform(corpus)
 
 # vec1 & vec2 are sparse SciPy matrices
 def dot_product(vec1, vec2):
@@ -54,15 +37,23 @@ def dot_product(vec1, vec2):
 def cos_similarity(doc1, doc2):
      return dot_product(doc1, doc2) / (np.sqrt(dot_product(doc1, doc1)) * np.sqrt(dot_product(doc2, doc2)))
 
-
-print cos_similarity(response[0], response[1])
-print cos_similarity(response[1], response[2])
-print cos_similarity(response[0], response[2])
-
-
-
 #
-#
-def print_feature_names(response):
-    for col in response.nonzero()[1]:
-    #print feature_names[col], ' - ', response[0, col]
+# def print_feature_names(response):
+#     for col in response.nonzero()[1]:
+#         print feature_names[col], ' - ', response[0, col]
+
+def TF_IDF_cosine_similarity(text1, text2, corpus):
+    IDF_corpus = [text1, text2]
+    IDF_corpus.extend(corpus)
+    print IDF_corpus
+    preprocessed_corpus = []
+    for text in IDF_corpus:
+        lowers_text = text.lower()
+        no_punctuation_text = lowers_text.translate(None, string.punctuation)
+        preprocessed_corpus.append(no_punctuation_text)
+
+    #making TF-IDF model -> this can take some time
+    tfidf = TfidfVectorizer(tokenizer=tokenize, stop_words='english')
+    response = tfidf.fit_transform(corpus)
+
+    return cos_similarity(response[0], response[1])

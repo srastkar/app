@@ -17,6 +17,8 @@ import nltk
 from nltk.stem.porter import PorterStemmer
 import time
 
+from text_compare import TF_IDF_cosine_similarity
+
 def stem_tokens(tokens):
     stemmer = PorterStemmer()
     stemmed = []
@@ -53,6 +55,11 @@ def extract_features(review):
     features.append(title_overlap)
 
     # Feature #4: similarity between review text and product description
+    query = "SELECT * FROM descriptions WHERE product_id = '" + review['product_id'] + "'"
+    cur.execute(query)
+    result = cur.fetchall()
+    product_desc = result[0]['description']
+    features.append(TF_IDF_cosine_similarity(review['review_text'], product_desc, []))
 
 
     # Feature #5 & #6: the reviewer activity and helpfulness
@@ -74,7 +81,6 @@ def extract_features(review):
     features.append(reviewer_helpfulness_score)
 
     # Feature #7: similarity between review text and the centroid of the first 3 helpful reviews
-    # features.append(TF_IDF_cosine_similarity(review, description, corpus))
 
     # converting to float so that features can be scaled
     return [float(i) for i in features]
@@ -129,13 +135,12 @@ def train_model():
     training_X_scaled = min_max_scaler.fit_transform(training_X)
 
     # Cross-validation
-    #cross_validate(training_X_scaled, training_y, ['precision', 'recall', 'f1', 'roc_auc'], 10)
+    cross_validate(training_X_scaled, training_y, ['precision', 'recall', 'f1', 'roc_auc'], 10)
 
     # Training
     model = LogisticRegression().fit(training_X_scaled, training_y)
     # model = RandomForestClassifier(n_estimators=1000).fit(training_X_scaled, training_y)
     # print model.feature_importances_
-
 
     return model, min_max_scaler
 
@@ -197,7 +202,7 @@ if __name__ == '__main__':
 
     print time.ctime()
     print('Testing...')
-    test(prediction_model, scaler)
+    #test(prediction_model, scaler)
 
     print time.ctime()
     con.commit()
