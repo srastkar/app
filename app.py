@@ -28,6 +28,9 @@ def retrieve_reviews():
         review['time'] = datetime.datetime.fromtimestamp(review['time']).strftime('%B %d, %Y')
     return render_template('reviews.html', reviews=query_results, title=product_title)
 
+@app.route('/slides')
+def slides():
+    return render_template('slides.html')
 
 if __name__ == '__main__':
     db = mdb.connect(user="root", host="localhost", passwd="moosh", db="amazon", charset='utf8')

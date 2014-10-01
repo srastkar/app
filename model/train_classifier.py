@@ -55,11 +55,11 @@ def extract_features(review):
     features.append(title_overlap)
 
     # Feature #4: similarity between review text and product description
-    query = "SELECT * FROM descriptions WHERE product_id = '" + review['product_id'] + "'"
-    cur.execute(query)
-    result = cur.fetchall()
-    product_desc = result[0]['description']
-    features.append(TF_IDF_cosine_similarity(review['review_text'], product_desc, []))
+    # query = "SELECT * FROM descriptions WHERE product_id = '" + review['product_id'] + "'"
+    # cur.execute(query)
+    # result = cur.fetchall()
+    # product_desc = result[0]['description']
+    # features.append(TF_IDF_cosine_similarity(review['review_text'], product_desc, []))
 
 
     # Feature #5 & #6: the reviewer activity and helpfulness
